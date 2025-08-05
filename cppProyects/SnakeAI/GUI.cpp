@@ -1,7 +1,7 @@
 #include <ncurses.h>
 #include <chrono>
 #include <thread>
-#include "GUI.hpp"
+#include "headers/GUI.hpp"
 
 GUI::GUI(/* args */) {
 }
