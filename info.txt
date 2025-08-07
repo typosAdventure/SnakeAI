@@ -1,0 +1,3 @@
+Editing path:
+
+$env:Path = "C:\MinGW64\bin;" + $env:Path
