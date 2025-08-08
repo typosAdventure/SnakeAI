@@ -1,5 +1,6 @@
 #include "gui/GUI.hpp"
 #include "game/GameLogic.hpp"
+#include <iostream>
 
 int main() {
     GUI* gui = new GUI();

@@ -1,18 +1,29 @@
-CXX = g++
-CXXFLAGS = -Wall -std=c++17
-DEPENDENCIES = -lncurses
+CXX := g++
+CXXFLAGS := -std=c++17 -Wall -I./src -MMD -MP
+SRC_DIR := src
+BUILD_DIR := build
+BIN_DIR := bin
+TARGET := $(BIN_DIR)/snake
 
-SRC = main.cpp GUI.cpp
-TEST_SRC = tests/SnakeBodyTest.cpp SnakeBody.cpp
+# Librerías de SFML
+SFML_LIBS := -lsfml-graphics -lsfml-window -lsfml-system
 
-all: app test
+SRC := $(wildcard $(SRC_DIR)/**/*.cpp) $(wildcard $(SRC_DIR)/*.cpp)
+OBJ := $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SRC))
+DEP := $(OBJ:.o=.d)
 
-app: $(SRC)
-	$(CXX) $(CXXFLAGS) $(SRC) -o app $(DEPENDENCIES)
+$(TARGET): $(OBJ)
+	@mkdir -p $(BIN_DIR)
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(SFML_LIBS)
 
-
-test: $(TEST_SRC)
-	$(CXX) $(CXXFLAGS) $(TEST_SRC) -o test_app
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -f app test_app
+	rm -rf $(BUILD_DIR) $(BIN_DIR)
+
+run: $(TARGET)
+	./$(TARGET)
+
+-include $(DEP)
