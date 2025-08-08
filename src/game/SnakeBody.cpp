@@ -1,4 +1,4 @@
-#include "headers/SnakeBody.hpp"
+#include "SnakeBody.hpp"
 
 SnakeBody::SnakeBody(SnakePart part, Direction dir) {
 
