@@ -1,11 +1,11 @@
 #include "gui/GUI.hpp"
 #include "game/GameLogic.hpp"
-#include <iostream>
 
 int main() {
     GUI* gui = new GUI();
     GameLogic* game = new GameLogic();
 
+    // Dividir en threads
     game->playGame();
     gui->render();
 

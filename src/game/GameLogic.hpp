@@ -1,12 +1,12 @@
 #ifndef GAME_LOGIC
+#include "GameBoard.hpp"
 
 class GameLogic {
     private:
-        
+        GameBoard* board;
     public:
-        GameLogic();
-        ~GameLogic();
-        void playGame();
+        GameBoard* GameLogic::getBoard();
+        void GameLogic::playGame();
 };
 
 #endif
