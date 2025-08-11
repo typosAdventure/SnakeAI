@@ -1,5 +1,6 @@
 #include <array>
 #include "Board.hpp"
+#include "Snake.hpp"
 #include <iostream>
 #include <cstdint>
 
@@ -7,7 +8,9 @@ std::array<std::array<Cell, WIDTH>, HEIGHT> board{};
 
 
 // Constructor: inicializa todo a 0
-Board::Board() {
+Board::Board() : gen(std::random_device{}()),
+      distX(0, WIDTH - 1),
+      distY(0, HEIGHT - 1) {
     clear();
 }
 
@@ -33,8 +36,7 @@ Cell Board::get(int x, int y) const {
     return 0;
 }
 
-bool Board::checkColision(int x, int y)
-{
+bool Board::checkColision(int x, int y) {
     return false;
 }
 
@@ -60,4 +62,21 @@ void Board::clearBoard(Snake* snake) {
 
         actualPart = actualPart->previousPart;
     }
+}
+
+bool Board::isFood(int x, int y) {
+    return get(x, y) == CellType::FOOD;
+}
+
+void Board::generateRandomFood() {
+    int x = distX(gen);
+    int y = distY(gen);
+
+    while (get(x, y) == CellType::SNAKE) {
+        x = distX(gen);
+        y = distY(gen);
+    }
+    
+    set(x, y, CellType::FOOD);
+    std::cout << "Food (x: " << x << ", y:" << y << ")" << std::endl;
 }

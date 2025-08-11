@@ -1,10 +1,7 @@
 #include "Snake.hpp"
 #include <tuple>
 #include <iostream>
-
-void newPart(Part* part) {
-
-}
+#include "Board.hpp"
 
 Snake::Snake() {
     Part* tail = new Part{3, 3, nullptr};
@@ -37,11 +34,9 @@ std::tuple<int, int> offSet(Dir dir) {
     case Dir::UP:
         return {0, -1};
         break;
-    case Dir::DOWN:
+    default: // DOWN
         return {0, 1};
         break;    
-    default:
-        break;
     }
 }
 
@@ -58,7 +53,7 @@ void Snake::removeTail() {
     current->previousPart = nullptr;
 }
 
-void Snake::move(Dir dir) {
+void Snake::move(Dir dir, Board* board) {
     auto [dx, dy] = offSet(dir);
 
     Part* newHead = new Part{
@@ -68,20 +63,17 @@ void Snake::move(Dir dir) {
     };
     head = newHead;
 
-    // if (!isFood()) {
+    if (board->isFood(head->x, head->y)) {
+        board->generateRandomFood();
+    } else {
         removeTail();
-        //     /* code */
-        // }
-        
+    }
+    
     Part* current = head;
     if (!current->previousPart) return;
 
     // Recorremos hasta llegar al penúltimo
     while (current->previousPart->previousPart != nullptr) {
-        std::cout << "x:" << current->x << ", y:" << current-> y << " | ";
-
         current = current->previousPart;
     }
-
-    std::cout << "x:" << current->x << ", y:" << current-> y << std::endl;
 }

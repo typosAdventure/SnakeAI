@@ -1,7 +1,8 @@
-#ifndef SNAKE_HPP
-#define SNAKE_HPP
+#pragma once
 
 enum class Dir { UP, DOWN, LEFT, RIGHT };
+
+class Board;
 
 struct Part {
     int x;
@@ -18,8 +19,6 @@ class Snake {
         Part* getHead();
         void grow();
         Dir getDirection();
-        void move(Dir dir);
+        void move(Dir dir, Board* board);
         void removeTail();
 };
-
-#endif

@@ -1,8 +1,9 @@
 #pragma once
 #include <array>
 #include <cstdint>
-#include "Snake.hpp"
+#include <random>
 
+class Snake;
 constexpr int WIDTH = 20;
 constexpr int HEIGHT = 20;
 using Cell = uint8_t; // entero sin signo de 1 byte
@@ -10,7 +11,9 @@ enum CellType : uint8_t { EMPTY = 0, SNAKE = 1, FOOD = 2 };
 
 class Board {
 private:
-
+    std::mt19937 gen;
+    std::uniform_int_distribution<> distX;
+    std::uniform_int_distribution<> distY;
 public:
     std::array<std::array<Cell, WIDTH>, HEIGHT> board;
     Board(); // constructor
@@ -23,4 +26,6 @@ public:
     auto& data(); // acceso lectura/escritura
     void updateBoard(Snake* snake);
     void clearBoard(Snake* snake);
+    bool isFood(int x, int y);
+    void generateRandomFood();
 };

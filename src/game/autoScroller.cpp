@@ -1,15 +1,12 @@
 #include <SFML/Graphics.hpp>
-#include <chrono>
-#include "Snake.hpp"
-#include "Board.hpp"
 #include "autoScroller.hpp"
+#include <chrono>
+#include "Board.hpp"
+#include "Snake.hpp"
+// #include "Snake.hpp"
 // #include <iostream>
 
 // enum CellType : uint8_t { EMPTY = 0, SNAKE = 1, FOOD = 2 };
-
-bool isFood(int x, int y) {
-    return false;
-}
 
 void drawSnake(sf::RenderWindow& window, const Board& board, int cellSize = 24, sf::Vector2f origin = {0.f, 0.f}) {
     sf::RectangleShape rect;
@@ -47,6 +44,7 @@ void autoScroll () {
 
     Board* board = new Board();
     Snake* snake = new Snake();
+    board->generateRandomFood();
     board->updateBoard(snake);
 
     while (window.isOpen()) {
@@ -67,6 +65,7 @@ void autoScroll () {
         double frame = std::chrono::duration<double>(now - last).count();
         last = now;
         accumulator += frame;
+        // place random food on board
 
 //----------------------------------------------------
         while (accumulator >= STEP_SEC) {
@@ -81,9 +80,9 @@ void autoScroll () {
             //         snake->grow();
             //     }
             // }
-            
+
             board->clearBoard(snake);
-            snake->move(dir);
+            snake->move(dir, board);
             board->updateBoard(snake);
 
             accumulator -= STEP_SEC;
