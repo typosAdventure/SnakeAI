@@ -17,7 +17,7 @@ void drawSnake(sf::RenderWindow& window, const Board& board, int cellSize = 24, 
     for (int y = 0; y < HEIGHT; ++y) {
         for (int x = 0; x < WIDTH; ++x) {
             Cell const v = board.get(x, y);
-            if (v == EMPTY) continue;// rect.setFillColor(sf::Color(80, 200, 80));
+            if (v == EMPTY) rect.setFillColor(sf::Color(25, 25, 25));
 
             // Color por tipo de celda
             if (v == SNAKE)      rect.setFillColor(sf::Color(60, 200, 80));  // verde
@@ -34,7 +34,7 @@ void autoScroll () {
     window.setFramerateLimit(60); // tope de FPS (render)
 
     // --- Estado del juego (ejemplo mínimo) ---
-    Dir dir = Dir::RIGHT;                 // dirección actual
+    Dir dir = Dir::RIGHT;             // dirección actual
     const double STEP_SEC = 0.2;         // 200 ms por paso de lógica (5 pasos/seg)
 
     // Clock para timestep fijo
@@ -44,8 +44,8 @@ void autoScroll () {
 
     Board* board = new Board();
     Snake* snake = new Snake();
-    board->generateRandomFood();
     board->updateBoard(snake);
+    board->generateRandomFood();
 
     while (window.isOpen()) {
         // -------- Input / eventos --------
@@ -69,20 +69,12 @@ void autoScroll () {
 
 //----------------------------------------------------
         while (accumulator >= STEP_SEC) {
-            // const int x = snake->getHead()->x;
-            // const int y = snake->getHead()->y;
-
-            // if (board->checkColision(x, y)) {
-            //     window.close();
-            // }
-            // else {
-            //     if (isFood(x, y)) { // global method
-            //         snake->grow();
-            //     }
-            // }
+            if (!snake->isAlive()) {
+                window.close();
+            }
 
             board->clearBoard(snake);
-            snake->move(dir, board);
+            snake->doLegalMove(dir, board);
             board->updateBoard(snake);
 
             accumulator -= STEP_SEC;
