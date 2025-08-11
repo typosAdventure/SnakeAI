@@ -11,7 +11,7 @@ enum class Dir { Up, Down, Left, Right };
 
 class Snake {
     private:
-        /* data */
+        Part* head;
     public:
         Snake(/* args */);
         ~Snake();

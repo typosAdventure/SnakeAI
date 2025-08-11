@@ -5,6 +5,7 @@
 
 std::array<std::array<Cell, WIDTH>, HEIGHT> board{};
 
+
 // Constructor: inicializa todo a 0
 Board::Board() {
     clear();
@@ -40,6 +41,16 @@ bool Board::checkColision(int x, int y)
 // Acceso crudo (si alguna vez querés iterar rápido)
 const auto& Board::data() const { return board; }
 auto& data() { return board; }
+
+void Board::updateBoard(Snake* snake) {
+    Part* actualPart = snake->getHead();
+
+    while (actualPart != nullptr) {
+        this->set(actualPart->x, actualPart->y, SNAKE);
+
+        actualPart = actualPart->previousPart;
+    }
+}
 
 // int main() {
 //     Board* bb = new Board();

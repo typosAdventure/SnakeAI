@@ -1,11 +1,11 @@
 #include <SFML/Graphics.hpp>
 #include <chrono>
-#include "Board.hpp"
 #include "Snake.hpp"
+#include "Board.hpp"
 #include "autoScroller.hpp"
 // #include <iostream>
 
-enum CellType : uint8_t { Empty = 0, Sank = 1, Food = 2 };
+// enum CellType : uint8_t { EMPTY = 0, SNAKE = 1, FOOD = 2 };
 
 bool isFood(int x, int y) {
     return false;
@@ -20,11 +20,11 @@ void drawSnake(sf::RenderWindow& window, const Board& board, int cellSize = 24, 
     for (int y = 0; y < HEIGHT; ++y) {
         for (int x = 0; x < WIDTH; ++x) {
             Cell const v = board.get(x, y);
-            if (v == Empty) rect.setFillColor(sf::Color(80, 200, 80));
+            if (v == EMPTY) continue;// rect.setFillColor(sf::Color(80, 200, 80));
 
             // Color por tipo de celda
-            if (v == Sank)      rect.setFillColor(sf::Color(60, 200, 80));  // verde
-            else if (v == Food) rect.setFillColor(sf::Color(220, 60, 60)); // rojo
+            if (v == SNAKE)      rect.setFillColor(sf::Color(60, 200, 80));  // verde
+            else if (v == FOOD) rect.setFillColor(sf::Color(220, 60, 60)); // rojo
 
             rect.setPosition(origin.x + x * cellSize, origin.y + y * cellSize);
             window.draw(rect);
@@ -67,7 +67,8 @@ void autoScroll () {
 //----------------------------------------------------
         Board* board = new Board();
         Snake* snake = new Snake();
-        
+        board->updateBoard(snake);
+
         // while (accumulator >= STEP_SEC) {
         //     const int x = snake->getHead()->x;
         //     const int y = snake->getHead()->y;

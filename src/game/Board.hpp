@@ -1,10 +1,12 @@
 #pragma once
 #include <array>
 #include <cstdint>
+#include "Snake.hpp"
 
 constexpr int WIDTH = 20;
 constexpr int HEIGHT = 20;
 using Cell = uint8_t; // entero sin signo de 1 byte
+enum CellType : uint8_t { EMPTY = 0, SNAKE = 1, FOOD = 2 };
 
 class Board {
 private:
@@ -19,4 +21,5 @@ public:
 
     const auto& data() const; // acceso de solo lectura
     auto& data(); // acceso lectura/escritura
+    void updateBoard(Snake* snake);
 };
