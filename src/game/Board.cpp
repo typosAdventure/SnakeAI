@@ -46,24 +46,18 @@ void Board::updateBoard(Snake* snake) {
     Part* actualPart = snake->getHead();
 
     while (actualPart != nullptr) {
-        this->set(actualPart->x, actualPart->y, SNAKE);
+        set(actualPart->x, actualPart->y, SNAKE);
 
         actualPart = actualPart->previousPart;
     }
 }
 
-// int main() {
-//     Board* bb = new Board();
+void Board::clearBoard(Snake* snake) {
+    Part* actualPart = snake->getHead();
 
-//     for (std::array<Cell, WIDTH> i : bb->board) {
-//         std::string row;
+    while (actualPart != nullptr) {
+        this->set(actualPart->x, actualPart->y, EMPTY);
 
-//         for (int n : i) {
-//             row += std::to_string(i[n]); // convierte y concatena
-//         }
-        
-//         std::cout << row << std::endl;
-//     }
-
-//     return 0;
-// }
+        actualPart = actualPart->previousPart;
+    }
+}

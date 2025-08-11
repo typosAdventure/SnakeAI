@@ -22,4 +22,5 @@ public:
     const auto& data() const; // acceso de solo lectura
     auto& data(); // acceso lectura/escritura
     void updateBoard(Snake* snake);
+    void clearBoard(Snake* snake);
 };

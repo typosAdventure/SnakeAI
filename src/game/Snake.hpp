@@ -1,13 +1,13 @@
 #ifndef SNAKE_HPP
 #define SNAKE_HPP
 
+enum class Dir { UP, DOWN, LEFT, RIGHT };
+
 struct Part {
     int x;
     int y;
     Part* previousPart;
 };
-
-enum class Dir { Up, Down, Left, Right };
 
 class Snake {
     private:
@@ -19,6 +19,7 @@ class Snake {
         void grow();
         Dir getDirection();
         void move(Dir dir);
+        void removeTail();
 };
 
 #endif

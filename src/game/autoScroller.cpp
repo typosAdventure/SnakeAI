@@ -37,7 +37,7 @@ void autoScroll () {
     window.setFramerateLimit(60); // tope de FPS (render)
 
     // --- Estado del juego (ejemplo mínimo) ---
-    Dir dir = Dir::Right;                 // dirección actual
+    Dir dir = Dir::RIGHT;                 // dirección actual
     const double STEP_SEC = 0.2;         // 200 ms por paso de lógica (5 pasos/seg)
 
     // Clock para timestep fijo
@@ -45,16 +45,20 @@ void autoScroll () {
     auto last = clock::now();
     double accumulator = 0.0;
 
+    Board* board = new Board();
+    Snake* snake = new Snake();
+    board->updateBoard(snake);
+
     while (window.isOpen()) {
         // -------- Input / eventos --------
         sf::Event e;
         while (window.pollEvent(e)) {
             if (e.type == sf::Event::Closed) window.close();
             if (e.type == sf::Event::KeyPressed) {
-                if (e.key.code == sf::Keyboard::W) dir = Dir::Up;
-                else if (e.key.code == sf::Keyboard::S) dir = Dir::Down;
-                else if (e.key.code == sf::Keyboard::A) dir = Dir::Left;
-                else if (e.key.code == sf::Keyboard::D) dir = Dir::Right;
+                if (e.key.code == sf::Keyboard::W) dir = Dir::UP;
+                else if (e.key.code == sf::Keyboard::S) dir = Dir::DOWN;
+                else if (e.key.code == sf::Keyboard::A) dir = Dir::LEFT;
+                else if (e.key.code == sf::Keyboard::D) dir = Dir::RIGHT;
             }
         }
 
@@ -65,32 +69,30 @@ void autoScroll () {
         accumulator += frame;
 
 //----------------------------------------------------
-        Board* board = new Board();
-        Snake* snake = new Snake();
-        board->updateBoard(snake);
+        while (accumulator >= STEP_SEC) {
+            // const int x = snake->getHead()->x;
+            // const int y = snake->getHead()->y;
 
-        // while (accumulator >= STEP_SEC) {
-        //     const int x = snake->getHead()->x;
-        //     const int y = snake->getHead()->y;
+            // if (board->checkColision(x, y)) {
+            //     window.close();
+            // }
+            // else {
+            //     if (isFood(x, y)) { // global method
+            //         snake->grow();
+            //     }
+            // }
+            
+            board->clearBoard(snake);
+            snake->move(dir);
+            board->updateBoard(snake);
 
-        //     if (board->checkColision(x, y)) {
-        //         window.close();
-        //     }
-        //     else {
-        //         if (isFood(x, y)) { // global method
-        //             snake->grow();
-        //         }
-
-        //         // snake->move(dir);
-        //     }
-
-        //     accumulator -= STEP_SEC;
-        // }
+            accumulator -= STEP_SEC;
+        }
 //----------------------------------------------------
 
     // -------- Render --------
         window.clear();
-        drawSnake(window, *board, 12);
+        drawSnake(window, *board, 24);
         window.display();
     }
 }
