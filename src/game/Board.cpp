@@ -72,7 +72,7 @@ void Board::generateRandomFood() {
     int x = distX(gen);
     int y = distY(gen);
 
-    while (get(x, y) == SNAKE) {
+    while (get(x, y) != EMPTY) {
         x = distX(gen);
         y = distY(gen);
     }

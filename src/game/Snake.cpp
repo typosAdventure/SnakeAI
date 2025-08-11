@@ -5,7 +5,7 @@
 
 Snake::Snake() {
     alive = true;
-    movingTo = Dir::RIGHT;
+    movingTo = Dir::DOWN;
 
     Part* tail = new Part{3, 3, nullptr};
     Part* body = new Part{4, 3, tail};

@@ -35,7 +35,7 @@ void autoScroll () {
 
     // --- Estado del juego (ejemplo mínimo) ---
     Dir dir = Dir::RIGHT;             // dirección actual
-    const double STEP_SEC = 0.2;         // 200 ms por paso de lógica (5 pasos/seg)
+    const double STEP_SEC = 0.5;      // 200 ms por paso de lógica (5 pasos/seg)
 
     // Clock para timestep fijo
     using clock = std::chrono::high_resolution_clock;
@@ -52,11 +52,21 @@ void autoScroll () {
         sf::Event e;
         while (window.pollEvent(e)) {
             if (e.type == sf::Event::Closed) window.close();
+
             if (e.type == sf::Event::KeyPressed) {
+                if (!snake->isAlive()) {
+                    window.close();
+                }
+
+                board->clearBoard(snake);
                 if (e.key.code == sf::Keyboard::W) dir = Dir::UP;
                 else if (e.key.code == sf::Keyboard::S) dir = Dir::DOWN;
                 else if (e.key.code == sf::Keyboard::A) dir = Dir::LEFT;
                 else if (e.key.code == sf::Keyboard::D) dir = Dir::RIGHT;
+
+                snake->doLegalMove(dir, board);
+                
+                board->updateBoard(snake);
             }
         }
 
