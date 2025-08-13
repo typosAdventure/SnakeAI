@@ -19,7 +19,7 @@ void drawSnake(sf::RenderWindow& window, const Board& board, int cellSize = 24, 
             
             // Color por tipo de celda
             if (v == EMPTY) rect.setFillColor(sf::Color(25, 25, 25));
-            if (v == SNAKE)      rect.setFillColor(sf::Color(60, 200, 80));  // verde
+            if (v == SNAKE) rect.setFillColor(sf::Color(60, 200, 80));  // verde
             else if (v == FOOD) rect.setFillColor(sf::Color(220, 60, 60)); // rojo
 
             rect.setPosition(origin.x + x * cellSize, origin.y + y * cellSize);
@@ -34,7 +34,7 @@ void autoScroll () {
 
     // --- Estado del juego (ejemplo mínimo) ---
     Dir dir = Dir::RIGHT;             // dirección actual
-    const double STEP_SEC = 0.2;      // 200 ms por paso de lógica (5 pasos/seg)
+    const double STEP_SEC = 0.1;      // 200 ms por paso de lógica (5 pasos/seg)
 
     // Clock para timestep fijo
     using clock = std::chrono::high_resolution_clock;
@@ -43,11 +43,7 @@ void autoScroll () {
 
     Snake* snake = new Snake();
     Board* board = new Board(snake);
-    // Rompe acá
-    std::cout << "Gen" << std::endl;
     board->generateRandomFood();
-    
-    std::cout << "Upd" << std::endl;
     board->updateBoard();
 
     while (window.isOpen()) {

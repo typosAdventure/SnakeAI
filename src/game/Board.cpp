@@ -8,8 +8,8 @@
 Board::Board(Snake* snakeParm) : gen(std::random_device{}()),
     distX(0, WIDTH - 1),
     distY(0, HEIGHT - 1) {
-    clear();
     board = {};
+    clear();
     snake = snakeParm;
     food = new Food {11, 11};
 }
@@ -47,14 +47,12 @@ bool Board::isFood(int x, int y) {
 void Board::updateBoard() {
     Part* actualPart = snake->getHead();
 
-    std::cout << "ASD" << std::endl;
     while (actualPart != nullptr) {
         set(actualPart->x, actualPart->y, CellType::SNAKE);
         actualPart = actualPart->previousPart;
     }
 
     set(food->x, food->y, CellType::FOOD);
-    std::cout << "Food (x: " << food->x << ", y:" << food->y << ")" << std::endl;
 }
 
 void Board::clearBoard() {
@@ -71,7 +69,6 @@ bool Board::isSnake(int x, int y) {
     Part* current = snake->getHead();
 
     while (current != nullptr && !(current->x == x && current->y == y)) {
-        std::cout << "DAS" << std::endl;
         current = current->previousPart;
     }
     
@@ -83,16 +80,19 @@ bool Board::isEmpty(int x, int y) {
 }
 
 void Board::generateRandomFood() {
-    int auxX = distX(gen);
-    int auxY = distY(gen);
+    std::vector<std::pair<int,int>> emptyCells;
+    emptyCells.reserve(WIDTH * HEIGHT);
 
-    while (!isEmpty(auxX, auxY)) {
-        auxX = distX(gen);
-        auxY = distY(gen);
-
+    for (int x = 0; x < WIDTH; x++) {
+        for (int y = 0; y < HEIGHT; y++) {
+            if (isEmpty(x, y)) emptyCells.emplace_back(x, y);
+        }
     }
+    
+    std::uniform_int_distribution<size_t> pick(0, emptyCells.size() - 1);
+    auto [fx, fy] = emptyCells[pick(gen)];
 
-    food->x = auxX;
-    food->y = auxY;
-    std::cout << "Food (x: " << food->x << ", y:" << food->y << ")" << std::endl;
+    food->x = fx;
+    food->y = fy;
+    std::cout << "Food (x: " << food->x << ", y:" << food->y << std::endl;
 }
