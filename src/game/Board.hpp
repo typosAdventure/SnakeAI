@@ -21,8 +21,10 @@ private:
     std::uniform_int_distribution<> distX;
     std::uniform_int_distribution<> distY;
     std::array<std::array<Cell, WIDTH>, HEIGHT> board;
+    Snake* snake;
+    Food* food;
 public:
-    Board(); // constructor
+    Board(Snake* snakeParm); // constructor
     void clear(); // limpia el tablero
     void set(int x, int y, Cell value); // setea una celda
     Cell get(int x, int y) const; // obtiene una celda
@@ -30,8 +32,10 @@ public:
 
     const auto& data() const; // acceso de solo lectura
     auto& data(); // acceso lectura/escritura
-    void updateBoard(Snake* snake);
-    void clearBoard(Snake* snake);
+    void updateBoard();
+    void clearBoard();
+    bool isSnake(int x, int y);
     bool isFood(int x, int y);
+    bool isEmpty(int x, int y);
     void generateRandomFood();
 };

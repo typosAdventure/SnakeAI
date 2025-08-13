@@ -5,11 +5,13 @@
 #include <cstdint>
 
 // Constructor: inicializa todo a 0
-Board::Board() : gen(std::random_device{}()),
+Board::Board(Snake* snakeParm) : gen(std::random_device{}()),
     distX(0, WIDTH - 1),
     distY(0, HEIGHT - 1) {
     clear();
     board = {};
+    snake = snakeParm;
+    food = new Food {11, 11};
 }
 
 // Limpia el tablero
@@ -36,23 +38,26 @@ Cell Board::get(int x, int y) const {
 }
 
 bool Board::isFood(int x, int y) {
-    return get(x, y) == CellType::FOOD;
+    return food->x == x && food->y == y;
 }
 
 // const auto& Board::data() const { return board; }
 // auto& data() { return board; }
 
-void Board::updateBoard(Snake* snake) {
+void Board::updateBoard() {
     Part* actualPart = snake->getHead();
 
+    std::cout << "ASD" << std::endl;
     while (actualPart != nullptr) {
         set(actualPart->x, actualPart->y, CellType::SNAKE);
-
         actualPart = actualPart->previousPart;
     }
+
+    set(food->x, food->y, CellType::FOOD);
+    std::cout << "Food (x: " << food->x << ", y:" << food->y << ")" << std::endl;
 }
 
-void Board::clearBoard(Snake* snake) {
+void Board::clearBoard() {
     Part* actualPart = snake->getHead();
 
     while (actualPart != nullptr) {
@@ -62,15 +67,32 @@ void Board::clearBoard(Snake* snake) {
     }
 }
 
-void Board::generateRandomFood() {
-    int x = distX(gen);
-    int y = distY(gen);
+bool Board::isSnake(int x, int y) {
+    Part* current = snake->getHead();
 
-    while (get(x, y) != EMPTY) {
-        x = distX(gen);
-        y = distY(gen);
+    while (current != nullptr && !(current->x == x && current->y == y)) {
+        std::cout << "DAS" << std::endl;
+        current = current->previousPart;
     }
     
-    set(x, y, FOOD);
-    std::cout << "Food (x: " << x << ", y:" << y << ")" << std::endl;
+    return current != nullptr;
+}
+
+bool Board::isEmpty(int x, int y) {
+    return !isFood(x, y) &&  !isSnake(x, y);
+}
+
+void Board::generateRandomFood() {
+    int auxX = distX(gen);
+    int auxY = distY(gen);
+
+    while (!isEmpty(auxX, auxY)) {
+        auxX = distX(gen);
+        auxY = distY(gen);
+
+    }
+
+    food->x = auxX;
+    food->y = auxY;
+    std::cout << "Food (x: " << food->x << ", y:" << food->y << ")" << std::endl;
 }

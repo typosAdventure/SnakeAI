@@ -3,8 +3,7 @@
 #include <chrono>
 #include "Board.hpp"
 #include "Snake.hpp"
-// #include "Snake.hpp"
-// #include <iostream>
+#include <iostream>
 
 // enum CellType : uint8_t { EMPTY = 0, SNAKE = 1, FOOD = 2 };
 
@@ -42,34 +41,28 @@ void autoScroll () {
     auto last = clock::now();
     double accumulator = 0.0;
 
-    Board* board = new Board();
     Snake* snake = new Snake();
-    board->updateBoard(snake);
+    Board* board = new Board(snake);
+    // Rompe acá
+    std::cout << "Gen" << std::endl;
     board->generateRandomFood();
+    
+    std::cout << "Upd" << std::endl;
+    board->updateBoard();
 
     while (window.isOpen()) {
-        // last = clock::now();
-        bool moveDone = false;
-
         // -------- Input / eventos --------
         sf::Event e;
         while (window.pollEvent(e)) {
             if (e.type == sf::Event::Closed) window.close();
 
             if (e.type == sf::Event::KeyPressed) {
-                // if (!snake->isAlive()) {
-                //     window.close();
-                // }
 
-                // board->clearBoard(snake);
                 if (e.key.code == sf::Keyboard::W) dir = Dir::UP;
                 else if (e.key.code == sf::Keyboard::S) dir = Dir::DOWN;
                 else if (e.key.code == sf::Keyboard::A) dir = Dir::LEFT;
                 else if (e.key.code == sf::Keyboard::D) dir = Dir::RIGHT;
 
-                
-
-                // board->updateBoard(snake);
             }
         }
 
@@ -78,22 +71,21 @@ void autoScroll () {
         double frame = std::chrono::duration<double>(now - last).count();
         last = now;
         accumulator += frame;
-        // place random food on board
 
-//----------------------------------------------------
-        while (!moveDone && accumulator >= STEP_SEC) {
+        //----------------------------------------------------
+        while (accumulator >= STEP_SEC) {
             if (!snake->isAlive()) {
                 window.close();
             }
 
-            board->clearBoard(snake);
+            board->clearBoard();
             snake->doLegalMove(dir);
             snake->autoMove(board);
-            board->updateBoard(snake);
+            board->updateBoard();
 
             accumulator -= STEP_SEC;
         }
-//----------------------------------------------------
+        //----------------------------------------------------
 
     // -------- Render --------
         window.clear();
