@@ -20,10 +20,11 @@ class Snake {
         Dir getDirection();
         bool isLegal(Dir dir1, Dir dir2);
     public:
-        void doLegalMove(Dir dir, Board* board);
+        int doLegalMove(Dir dir);
         Snake(/* args */);
         ~Snake();
         bool isAlive();
         Part* getHead();
         void move(Dir dir, Board* board);
+        void autoMove(Board* board);
 };

@@ -17,9 +17,9 @@ void drawSnake(sf::RenderWindow& window, const Board& board, int cellSize = 24, 
     for (int y = 0; y < HEIGHT; ++y) {
         for (int x = 0; x < WIDTH; ++x) {
             Cell const v = board.get(x, y);
-            if (v == EMPTY) rect.setFillColor(sf::Color(25, 25, 25));
-
+            
             // Color por tipo de celda
+            if (v == EMPTY) rect.setFillColor(sf::Color(25, 25, 25));
             if (v == SNAKE)      rect.setFillColor(sf::Color(60, 200, 80));  // verde
             else if (v == FOOD) rect.setFillColor(sf::Color(220, 60, 60)); // rojo
 
@@ -35,7 +35,7 @@ void autoScroll () {
 
     // --- Estado del juego (ejemplo mínimo) ---
     Dir dir = Dir::RIGHT;             // dirección actual
-    const double STEP_SEC = 0.5;      // 200 ms por paso de lógica (5 pasos/seg)
+    const double STEP_SEC = 0.2;      // 200 ms por paso de lógica (5 pasos/seg)
 
     // Clock para timestep fijo
     using clock = std::chrono::high_resolution_clock;
@@ -48,25 +48,28 @@ void autoScroll () {
     board->generateRandomFood();
 
     while (window.isOpen()) {
+        // last = clock::now();
+        bool moveDone = false;
+
         // -------- Input / eventos --------
         sf::Event e;
         while (window.pollEvent(e)) {
             if (e.type == sf::Event::Closed) window.close();
 
             if (e.type == sf::Event::KeyPressed) {
-                if (!snake->isAlive()) {
-                    window.close();
-                }
+                // if (!snake->isAlive()) {
+                //     window.close();
+                // }
 
-                board->clearBoard(snake);
+                // board->clearBoard(snake);
                 if (e.key.code == sf::Keyboard::W) dir = Dir::UP;
                 else if (e.key.code == sf::Keyboard::S) dir = Dir::DOWN;
                 else if (e.key.code == sf::Keyboard::A) dir = Dir::LEFT;
                 else if (e.key.code == sf::Keyboard::D) dir = Dir::RIGHT;
 
-                snake->doLegalMove(dir, board);
                 
-                board->updateBoard(snake);
+
+                // board->updateBoard(snake);
             }
         }
 
@@ -78,13 +81,14 @@ void autoScroll () {
         // place random food on board
 
 //----------------------------------------------------
-        while (accumulator >= STEP_SEC) {
+        while (!moveDone && accumulator >= STEP_SEC) {
             if (!snake->isAlive()) {
                 window.close();
             }
 
             board->clearBoard(snake);
-            snake->doLegalMove(dir, board);
+            snake->doLegalMove(dir);
+            snake->autoMove(board);
             board->updateBoard(snake);
 
             accumulator -= STEP_SEC;

@@ -4,14 +4,12 @@
 #include <iostream>
 #include <cstdint>
 
-std::array<std::array<Cell, WIDTH>, HEIGHT> board{};
-
-
 // Constructor: inicializa todo a 0
 Board::Board() : gen(std::random_device{}()),
-      distX(0, WIDTH - 1),
-      distY(0, HEIGHT - 1) {
+    distX(0, WIDTH - 1),
+    distY(0, HEIGHT - 1) {
     clear();
+    board = {};
 }
 
 // Limpia el tablero
@@ -37,16 +35,12 @@ Cell Board::get(int x, int y) const {
     return 0;
 }
 
-bool Board::checkColision(int x, int y) {
-    return get(x, y) == CellType::SNAKE;
-}
-
 bool Board::isFood(int x, int y) {
     return get(x, y) == CellType::FOOD;
 }
 
-const auto& Board::data() const { return board; }
-auto& data() { return board; }
+// const auto& Board::data() const { return board; }
+// auto& data() { return board; }
 
 void Board::updateBoard(Snake* snake) {
     Part* actualPart = snake->getHead();

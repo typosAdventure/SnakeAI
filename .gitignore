@@ -1,3 +1,7 @@
-.vscode/
-info.txt
+/bin/
+/build/
+*.o
+*.obj
+*.d
 *.exe
+*.log

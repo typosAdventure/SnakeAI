@@ -5,14 +5,12 @@
 
 Snake::Snake() {
     alive = true;
-    movingTo = Dir::DOWN;
+    movingTo = Dir::RIGHT;
 
     Part* tail = new Part{3, 3, nullptr};
     Part* body = new Part{4, 3, tail};
-    Part* body2 = new Part{5, 3, body};
-    Part* body3 = new Part{6, 3, body2};
 
-    head = new Part{7, 3, body3};
+    head = new Part{5, 3, body};
 }
 
 Part* Snake::getHead() {
@@ -76,14 +74,22 @@ bool Snake::isLegal(Dir dir1, Dir dir2) {
     return (isWidth1 != isWidth2) && (isHeight1 != isHeight2);
 }
 
-void Snake::doLegalMove(Dir dir, Board* board) {  
+int Snake::doLegalMove(Dir dir) {  
     if (isLegal(dir, movingTo)) {
-        move(dir, board);
+        // move(dir, board);
         movingTo = dir;
-    } else {
-        move(movingTo, board);
+
+        return 1;
     }
+    return 0;
+    // else {
+    //     move(movingTo, board);
+    // }
     // move(movingTo, board);
+}
+
+void Snake::autoMove(Board* board) {
+    move(movingTo, board);
 }
 
 void Snake::move(Dir dir, Board* board) {
