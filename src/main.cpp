@@ -1,8 +1,10 @@
 #include "game/autoScroller.hpp"
+#include "API/APISnake.hpp"
 
 int main() {
-    // Dividir en threads
-    autoScroll();
+    // autoScroll();
+    APISnake* apiSnake = new APISnake();
+    apiSnake->createNewGame(1, 1);
 
     return 0;
 }

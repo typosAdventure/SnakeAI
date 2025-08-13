@@ -46,7 +46,8 @@ void autoScroll () {
     board->generateRandomFood();
     board->updateBoard();
 
-    while (window.isOpen()) {
+    while (snake->isAlive()) {
+    // while (window.isOpen()) {
         // -------- Input / eventos --------
         sf::Event e;
         while (window.pollEvent(e)) {
@@ -88,4 +89,6 @@ void autoScroll () {
         drawSnake(window, *board, 24);
         window.display();
     }
+
+    std::cout << "Endgame" << std::endl;
 }

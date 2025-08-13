@@ -76,16 +76,12 @@ bool Snake::isLegal(Dir dir1, Dir dir2) {
 
 int Snake::doLegalMove(Dir dir) {  
     if (isLegal(dir, movingTo)) {
-        // move(dir, board);
         movingTo = dir;
 
         return 1;
     }
+    
     return 0;
-    // else {
-    //     move(movingTo, board);
-    // }
-    // move(movingTo, board);
 }
 
 void Snake::autoMove(Board* board) {
