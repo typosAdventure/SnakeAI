@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <random>
 
+// Board refactor
 struct Food {
     int x;
     int y;
