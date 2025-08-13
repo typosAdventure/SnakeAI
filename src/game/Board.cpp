@@ -82,10 +82,13 @@ bool Board::isEmpty(int x, int y) {
 void Board::generateRandomFood() {
     std::vector<std::pair<int,int>> emptyCells;
     emptyCells.reserve(WIDTH * HEIGHT);
+    int i = 0;
 
     for (int x = 0; x < WIDTH; x++) {
         for (int y = 0; y < HEIGHT; y++) {
             if (isEmpty(x, y)) emptyCells.emplace_back(x, y);
+
+            i++;
         }
     }
     
@@ -94,5 +97,5 @@ void Board::generateRandomFood() {
 
     food->x = fx;
     food->y = fy;
-    std::cout << "Food (x: " << food->x << ", y:" << food->y << std::endl;
+    std::cout << "Food (x: " << food->x << ", y:" << food->y << ")" << std::endl;
 }
