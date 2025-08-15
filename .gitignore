@@ -1,5 +1,7 @@
 /bin/
 /build/
+/.vscode/
+info.txt
 *.o
 *.obj
 *.d
