@@ -1,17 +1,26 @@
 #pragma once
+#include "../game/Game.hpp"
 
-enum Class Dir;
+// enum Class Dir;
 // template <typename T>
+
+struct GamesList {
+    Game* game;
+    GamesList* nextGame;
+};
+
 
 class APISnake {
     private:
-        // GamesList* game;
+        GamesList* games;
     public:
+        Game* game = new Game();
+        
         // Calls the program externally and provides a series of
         // functions to be used.
-        APISnake();
+        // APISnake();
 
-        ~APISnake();
+        // ~APISnake();
     
         // Creates a new game and returns an Id number of itself.
         // Parameters:
@@ -21,7 +30,9 @@ class APISnake {
 
         void autoScroll();
 
-            // void returnGameData(T&& apiUser);
+        void returnGameData(int idGame);
+
+        void moveSnake(Dir dir);
         
         // Sets the new snake direction.
             // void move(Dir dir);

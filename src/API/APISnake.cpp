@@ -2,17 +2,17 @@
 #include "../game/Game.hpp"
 #include "../gui/GUI.hpp"
 
+
 int APISnake::createNewGame(bool render, bool autoScroll) {
-    Game* game = new Game();
     GUI* gui = new GUI();
 
-    if (autoScroll) {
-        game->autoScroll();
-    } else {
-        game->playGame();
-    }
+    game->playGameBis(autoScroll);
 
-    if(render) {
-        gui->render();
-    }
+    // if(render) {
+    //     gui->render(game->getBoard());
+    // }
+}
+
+void APISnake::moveSnake(Dir dir) {
+    game->moveSnake(dir);
 }

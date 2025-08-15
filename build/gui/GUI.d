@@ -1,2 +1,4 @@
-build/gui/GUI.o: src/gui/GUI.cpp src/gui/GUI.hpp
+build/gui/GUI.o: src/gui/GUI.cpp src/gui/GUI.hpp \
+ src/gui/../game/Board.hpp
 src/gui/GUI.hpp:
+src/gui/../game/Board.hpp:

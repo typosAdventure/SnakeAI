@@ -12,6 +12,8 @@ Board::Board(Snake* snakeParm) : gen(std::random_device{}()),
     clear();
     snake = snakeParm;
     food = new Food {11, 11};
+    generateRandomFood();
+    updateBoard();
 }
 
 // Limpia el tablero

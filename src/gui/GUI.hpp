@@ -1,4 +1,5 @@
-#ifndef GUI_HPP
+#pragma once
+#include "../game/Board.hpp"
 
 class GUI {
     private:
@@ -6,7 +7,5 @@ class GUI {
     public:
         GUI();
         ~GUI();
-        void render();
+        // void render(Board* board);
 };
-
-#endif
