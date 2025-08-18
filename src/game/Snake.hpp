@@ -20,6 +20,7 @@ class Snake {
         Dir getDirection();
         bool isLegal(Dir dir1, Dir dir2);
     public:
+        int score;
         Dir externalDir;
         int doLegalMove(Dir dir);
         Snake(/* args */);

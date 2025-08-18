@@ -13,9 +13,7 @@ struct GamesList {
 class APISnake {
     private:
         GamesList* games;
-    public:
-        Game* game = new Game();
-        
+    public:        
         // Calls the program externally and provides a series of
         // functions to be used.
         // APISnake();
@@ -28,12 +26,11 @@ class APISnake {
         //     autoScroll: true autoScrolls, else does not scrolls.
         int createNewGame(bool render, bool autoScroll);
 
-        void autoScroll();
-
         void returnGameData(int idGame);
 
-        void moveSnake(Dir dir);
+        void moveSnake(int idGame, Dir dir);
         
+        // Game* getGame(int idGame);
         // Sets the new snake direction.
             // void move(Dir dir);
 

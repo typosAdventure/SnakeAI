@@ -6,6 +6,7 @@
 Snake::Snake() {
     alive = true;
     movingTo = Dir::RIGHT;
+    score = 0;
 
     Part* tail = new Part{3, 3, nullptr};
     Part* body = new Part{4, 3, tail};
@@ -107,16 +108,19 @@ void Snake::move(Dir dir, Board* board) {
 
     head = newHead;
 
-    if (board->get(head->x, head->y) == CellType::FOOD) {
-        board->generateRandomFood();
-    } else {
-        removeTail();
-    }
     
     Part* current = head;
     if (!current->previousPart) return;
-
+    
     while (current->previousPart->previousPart != nullptr) {
         current = current->previousPart;
+    }
+
+    if (board->isFood(head->x, head->y)) {
+        score++;
+        // std::cout << score << std::endl;
+        board->generateRandomFood();
+    } else {
+        removeTail();
     }
 }

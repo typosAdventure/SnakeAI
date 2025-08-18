@@ -6,7 +6,31 @@
 #include "Snake.hpp"
 #include <iostream>
 
-// enum CellType : uint8_t { EMPTY = 0, SNAKE = 1, FOOD = 2 };
+std::string getBoardState(Board* board) {
+    std::string boardState = "";
+    
+    for (size_t x = 0; x < WIDTH; x++) {
+        for (size_t y = 0; y < HEIGHT; y++) {
+            boardState += std::to_string(board->get(x,y));
+        }
+    }
+    
+    return boardState;
+}
+
+Dir parseAction(const std::string& action) {
+    std::string act = action;
+
+    // pasamos a mayúsculas para que sea más flexible
+    std::transform(act.begin(), act.end(), act.begin(), ::toupper);
+
+    if (act == "UP"    || act == "0") return Dir::UP;
+    if (act == "RIGHT" || act == "1") return Dir::RIGHT;
+    if (act == "DOWN"  || act == "2") return Dir::DOWN;
+    if (act == "LEFT"  || act == "3") return Dir::LEFT;
+
+    return Dir::LEFT; // default si no coincide nada
+}
 
 void Game::moveSnake(Dir dir) {
     snake->externalDir = dir;
@@ -34,8 +58,10 @@ void drawSnake(sf::RenderWindow& window, const Board& board, int cellSize = 24, 
 }
 
 void Game::autoScroll(bool autoScroll) {
-    sf::RenderWindow window(sf::VideoMode(800, 600), "Snake");
-    window.setFramerateLimit(60); // tope de FPS (render)
+    // sf::RenderWindow window(sf::VideoMode(800, 600), "Snake");
+    // window.setFramerateLimit(60); // tope de FPS (render)
+
+    // window.close();
 
     // --- Estado del juego (ejemplo mínimo) ---
     Dir externalDir = Dir::RIGHT;             // dirección actual
@@ -49,35 +75,31 @@ void Game::autoScroll(bool autoScroll) {
     
     Snake* snake = new Snake();
     Board* board = new Board(snake);
-    // bool scrolling = true;
+    int legalMoves = 0;
+    // std::string boardState = getBoardState(board);
 
-    // while (snake->isAlive()) {
-    while (window.isOpen() && snake->isAlive()) {
-        // -------- Input / eventos --------
-        sf::Event e;
-        while (window.pollEvent(e)) {
-            if (e.type == sf::Event::Closed) window.close();
+    board->clearBoard();
+    board->updateBoard();
 
-            if (e.type == sf::Event::KeyPressed) {
+    std::cout 
+            << "{\"state\":\"" << getBoardState(board) << "\","
+            << "\"legalMoves\":\"" << legalMoves << "\","
+            "\"done\":" << !snake->isAlive() << "}" << std::endl;
 
-                if (e.key.code == sf::Keyboard::W) snake->externalDir = Dir::UP;
-                else if (e.key.code == sf::Keyboard::S) snake->externalDir = Dir::DOWN;
-                else if (e.key.code == sf::Keyboard::A) snake->externalDir = Dir::LEFT;
-                else if (e.key.code == sf::Keyboard::D) snake->externalDir = Dir::RIGHT;
-                else if (e.key.code == sf::Keyboard::T) {
-                    last = clock::now();
-                    accumulator = 0.0;
-                    autoScroll = !autoScroll;
-                }
+    while (snake->isAlive() || legalMoves > 50) {
+        std::string input;
+        std::getline(std::cin, input);
 
-                if (!autoScroll) {
-                    board->clearBoard();
-                    snake->doLegalMove(snake->externalDir);
-                    snake->autoMove(board);
-                    board->updateBoard();
-                }
-            }
-        }
+        board->clearBoard();
+        legalMoves += snake->doLegalMove(parseAction(input));
+        snake->autoMove(board);
+        board->updateBoard();
+
+        std::cout 
+            << "{\"state\":\"" << getBoardState(board) << "\","
+            << "\"legalMoves\":\"" << legalMoves << "\","
+            << "\"score\":\"" << snake->score << "\","
+            "\"done\":" << !snake->isAlive() << "}" << std::endl;
 
         // -------- Timestep fijo (lógica independiente del render) --------
         auto now = clock::now();
@@ -88,11 +110,11 @@ void Game::autoScroll(bool autoScroll) {
         //----------------------------------------------------
         while (accumulator >= STEP_SEC && autoScroll) {
             if (!snake->isAlive()) {
-                window.close();
+                std::exit(0);
             }
 
             board->clearBoard();
-            snake->doLegalMove(snake->externalDir);
+            legalMoves += snake->doLegalMove(snake->externalDir);
             snake->autoMove(board);
             board->updateBoard();
 
@@ -101,9 +123,14 @@ void Game::autoScroll(bool autoScroll) {
         //----------------------------------------------------
 
     // -------- Render --------
-        window.clear();
-        drawSnake(window, *board, 24);
-        window.display();
+        // if(true) {
+        //     sf::RenderWindow window(sf::VideoMode(800, 600), "Snake");
+        //     window.setFramerateLimit(60); // tope de FPS (render)
+
+        //     window.clear();
+        //     drawSnake(window, *board, 24);
+        //     window.display();
+        // }
     }
 
     std::cout << "Endgame" << std::endl;

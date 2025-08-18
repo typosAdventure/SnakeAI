@@ -20,10 +20,10 @@ private:
     std::mt19937 gen;
     std::uniform_int_distribution<> distX;
     std::uniform_int_distribution<> distY;
-    std::array<std::array<Cell, WIDTH>, HEIGHT> board;
     Snake* snake;
     Food* food;
 public:
+    std::array<std::array<Cell, WIDTH>, HEIGHT> board;
     Board(Snake* snakeParm); // constructor
     void clear(); // limpia el tablero
     void set(int x, int y, Cell value); // setea una celda
