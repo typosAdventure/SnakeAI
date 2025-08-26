@@ -1,20 +1,20 @@
-#include "Snake.hpp"
-#include <tuple>
+#include "snake/Snake.hpp"
+#include "snake/Board.hpp"
 #include <iostream>
-#include "Board.hpp"
+#include <tuple>
 
 Snake::Snake() {
     alive = true;
     movingTo = Dir::RIGHT;
     score = 0;
 
-    Part* tail = new Part{3, 3, nullptr};
-    Part* body = new Part{4, 3, tail};
+    Part *tail = new Part{3, 3, nullptr};
+    Part *body = new Part{4, 3, tail};
 
     head = new Part{5, 3, body};
 }
 
-Part* Snake::getHead() {
+Part *Snake::getHead() {
     return head;
 }
 
@@ -39,25 +39,27 @@ std::tuple<int, int> offSet(Dir dir) {
         break;
     default: // DOWN
         return {0, 1};
-        break;    
+        break;
     }
 }
 
 void Snake::removeTail() {
-    Part* current = head;
+    Part *curr = getHead();
 
-    if (!current->previousPart) return;
-
-    while (current->previousPart->previousPart != nullptr) {
-        current = current->previousPart;
+    if (curr->previousPart == nullptr) {
+        return;
     }
-    
-    delete current->previousPart;
-    current->previousPart = nullptr;
+
+    while (curr->previousPart->previousPart) {
+        curr = curr->previousPart;
+    }
+
+    delete curr->previousPart;
+    curr->previousPart = nullptr;
 }
 
 bool Snake::collidesWith(int newX, int newY) {
-    Part* current = getHead();
+    Part *current = getHead();
 
     while (current != nullptr && !(current->x == newX && current->y == newY)) {
         current = current->previousPart;
@@ -75,50 +77,48 @@ bool Snake::isLegal(Dir dir1, Dir dir2) {
     return (isWidth1 != isWidth2) && (isHeight1 != isHeight2);
 }
 
-int Snake::doLegalMove(Dir dir) {  
+int Snake::doLegalMove(Dir dir) {
     if (isLegal(dir, movingTo)) {
         movingTo = dir;
 
         return 1;
     }
-    
+
     return 0;
 }
 
-void Snake::autoMove(Board* board) {
+void Snake::autoMove(Board *board) {
     move(movingTo, board);
 }
 
-void Snake::move(Dir dir, Board* board) {
+void Snake::move(Dir dir, Board *board) {
     auto [dx, dy] = offSet(dir);
     int newX = head->x + dx;
     int newY = head->y + dy;
 
     if (collidesWith(newX, newY) ||
-      newX < 0 || newX >= WIDTH || newY < 0 || newY >= HEIGHT) {
+        newX < 0 || newX >= WIDTH || newY < 0 || newY >= HEIGHT) {
         alive = false;
         return;
     }
-    
-    Part* newHead = new Part{
+
+    Part *newHead = new Part{
         newX,
         newY,
-        head
-    };
+        head};
 
     head = newHead;
 
-    
-    Part* current = head;
-    if (!current->previousPart) return;
-    
+    Part *current = head;
+    if (!current->previousPart)
+        return;
+
     while (current->previousPart->previousPart != nullptr) {
         current = current->previousPart;
     }
 
     if (board->isFood(head->x, head->y)) {
         score++;
-        // std::cout << score << std::endl;
         board->generateRandomFood();
     } else {
         removeTail();

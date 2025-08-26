@@ -1,0 +1,145 @@
+#include "nn/NeuralNetwork.hpp"
+#include <chrono>
+#include <iostream>
+
+static std::random_device rd;
+static std::mt19937 gen(rd());
+static std::uniform_int_distribution<int> dist(0, 2);
+
+int processAnswer(std::span<float> answer) {
+    auto it = std::max_element(answer.begin(), answer.end());
+    size_t index = std::distance(answer.begin(), it);
+
+    return index;
+}
+
+size_t getCorrect(std::vector<float> v) {
+    size_t correct = 0;
+
+    for (size_t i = 0; i < v.size(); i++) {
+        if (v[i] == 0) {
+            correct = i;
+        }
+    }
+
+    return correct;
+}
+
+// std::vector<float> tempWeights = {0.0616167, -0.855075, -0.913954, 0.9999, 0.9999, -0.9999, 0.619936, 0.9999, 0.526277};
+float played = 10;
+
+float playGameNN(NeuralNetwork &net) {
+    std::vector<float> colors;
+    size_t correctIndex = 0;
+    size_t currCorrects = 0;
+    float score = 0;
+    size_t answer = 0;
+    float gamesPlayed = 1.0f;
+    int rnd;
+    // net.weights = {0, 1, 1, 1, 0, 1, 1, 1, 0};
+
+    while (gamesPlayed <= played) {
+        currCorrects = 0;
+        correctIndex = 0;
+        answer = 0;
+
+        while (answer == correctIndex && currCorrects < 100) {
+            colors = {1, 0, 1};
+            // rnd = dist(gen);
+
+            // std::cout << rnd << std::endl;
+            colors[rnd] = 0;
+
+            correctIndex = getCorrect(colors);
+            // std::cout << "Correct: " << correctIndex << std::endl;
+            answer = processAnswer(processData(colors, net));
+            // std::cout << "Answer: " << answer << std::endl;
+
+            if (answer == correctIndex) {
+                currCorrects++;
+                score++;
+            }
+        }
+
+        // if (currCorrects >= 50) {
+        //     std::cout << "OMG!" << std::endl;
+        // }
+
+        gamesPlayed++;
+    }
+
+    return (float)score / (gamesPlayed - 1);
+}
+
+#include <chrono>
+#include <iostream>
+
+int main() {
+    size_t gens = 0;
+    size_t genPrinter = 0;
+    size_t mutations = 100;
+    float globalScore = 0;
+    float bestScore = 0.0f;
+
+    std::vector<size_t> n = {3, 3};
+    NeuralNetwork winnerNet = createNewNetwork(n);
+
+    // arranca el cronómetro global
+    auto startTotal = std::chrono::high_resolution_clock::now();
+
+    while (gens < 100) {
+        float currScore = 0;
+        std::vector<NeuralNetwork> nets;
+
+        nets.push_back(winnerNet);
+
+        for (size_t i = 1; i < mutations; i++) {
+            float percentage = 100.0f / (5.0f - (100.0f / ((float)gens / 100.0f) + 2.0f));
+            nets.push_back(mutateNetBIS(winnerNet, n, percentage));
+        }
+
+        size_t index = 0;
+        while (index < nets.size()) {
+            currScore = playGameNN(nets[index]);
+            if (currScore > bestScore) {
+                winnerNet = nets[index];
+                bestScore = currScore;
+            }
+            index++;
+        }
+        if (currScore > globalScore) {
+            globalScore = currScore;
+        }
+
+        gens++;
+        genPrinter++;
+
+        if (genPrinter == 100) {
+            // medir tiempo parcial
+            auto now = std::chrono::high_resolution_clock::now();
+            auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - startTotal).count();
+
+            std::cout << "Gen: " << gens
+                      << ". Best score: " << globalScore
+                      << ". Winner score: " << playGameNN(winnerNet)
+                      << ". Tiempo transcurrido: " << elapsed << " ms"
+                      << std::endl;
+
+            genPrinter = 0;
+        }
+    }
+
+    auto endTotal = std::chrono::high_resolution_clock::now();
+    auto totalElapsed = std::chrono::duration_cast<std::chrono::seconds>(endTotal - startTotal).count();
+
+    std::cout << "Final score: " << globalScore << std::endl;
+    std::cout << "{" << winnerNet.weights[0];
+    for (size_t i = 1; i < winnerNet.weights.size(); i++) {
+        std::cout << "," << winnerNet.weights[i];
+    }
+    std::cout << "}" << std::endl;
+
+    std::cout << "Tiempo total: " << totalElapsed << " segundos" << std::endl;
+
+    return 0;
+}
