@@ -3,6 +3,9 @@
 #include <iostream>
 #include <span>
 
+static std::random_device rd;
+static std::mt19937 mutSeed(rd());
+
 std::size_t max_index(std::span<float> s) {
     if (s.empty())
         return std::size_t(-1);                     // o tirá excepción si preferís
@@ -69,14 +72,16 @@ Dir processDir(std::span<float> span) {
 std::vector<float> convertGameInfo(GameInfo gameInfo) {
     // 3 tipos de celdas (body, head y food) + movingTo
     std::vector<float> vec;
-    vec.reserve(gameInfo.board.size() * 3 + 4);
+    vec.reserve((gameInfo.board.size() * 3) + 4);
 
     for (int i = 0; i < 3; i++) {
         vec.insert(vec.end(), gameInfo.board.begin(), gameInfo.board.end());
     }
+    vec.insert(vec.end(), {0, 0, 0, 0});
 
-    size_t vecSize = vec.size();
-    std::vector<size_t> sizes = {vecSize, vecSize, vecSize, 4};
+    size_t boardSize = gameInfo.board.size();
+    std::vector<size_t> sizes = {boardSize, boardSize, boardSize, 4};
+
     std::vector<std::span<float>> vecSpans = makeSpans(vec, sizes);
 
     clearCells(SNAKE, vecSpans[0]);
@@ -90,15 +95,11 @@ std::vector<float> convertGameInfo(GameInfo gameInfo) {
 std::tuple<float, float> playGameNN(NeuralNetwork &net) {
     float fitness = 0;
     float score = 0;
-    size_t maxSteps = 100;
-    size_t toPlay = 10;
+    size_t maxSteps = 30;
+    size_t toPlay = 6;
     GameInfo gameInfo;
     Game *game;
     std::vector<float> inputLayer;
-
-    // Game *game = new Game(false);
-    // game->playGame();
-    // gameInfo = game->getGameInfo();
 
     for (size_t i = 0; i < toPlay; i++) {
         game = new Game(false);
@@ -109,16 +110,18 @@ std::tuple<float, float> playGameNN(NeuralNetwork &net) {
             Dir dir;
             inputLayer = convertGameInfo(gameInfo);
             dir = processDir(processData(inputLayer, net));
-            // snakeNN... processes... snakeNN.sleep(int seconds);
-
             game->step(dir);
             gameInfo = game->getGameInfo();
         }
 
-        fitness += calculateFitness();
-        score += calculateScore();
+        size_t legal = gameInfo.legalMoves + 1;
+
+        score += gameInfo.finalScore;
+        fitness += gameInfo.finalScore;
     }
     gameInfo = game->getGameInfo();
+
+    delete game;
 
     return {score / toPlay, fitness / toPlay};
 }
@@ -126,19 +129,19 @@ std::tuple<float, float> playGameNN(NeuralNetwork &net) {
 int main() {
     size_t gens = 0;
     size_t genPrinter = 0;
-    size_t mutations = 100;
+    size_t mutations = 64;
     float globalScore = 0;
     // float bestScore = 0;
     float fitness = 0;
     float bestFitness = 0;
 
-    std::vector<size_t> n = {304, 4};
+    std::vector<size_t> n = {304, 154, 4};
     NeuralNetwork winnerNet = createNewNetwork(n);
 
-    Game *game = new Game(false);
-    game->playGame();
+    // Game *game = new Game(false);
+    // game->playGame();
 
-    while (gens < 100) {
+    while (gens < 10000) {
         float currScore = 0;
         std::vector<NeuralNetwork> nets;
 
@@ -146,31 +149,34 @@ int main() {
 
         for (size_t i = 1; i < mutations; i++) {
             float percentage = 100.0f / (5.0f - (100.0f / ((float)gens / 100.0f) + 2.0f));
-            nets.push_back(mutateNetBIS(winnerNet, n, percentage));
+            // float percentage = 5;
+            static std::uniform_real_distribution<float> mut(0, percentage);
+            nets.push_back(mutateNetBIS(winnerNet, n, mut(mutSeed)));
         }
 
         size_t i = 0;
         while (i < nets.size()) {
-            currScore = std::get<0>(playGameNN(nets[i]));
-            fitness = std::get<1>(playGameNN(nets[i]));
+            std::tuple<float, float> tuple = playGameNN(nets[i]);
+            currScore = std::get<0>(tuple);
+            fitness = std::get<1>(tuple);
 
             if (fitness > bestFitness) {
                 winnerNet = nets[i];
                 bestFitness = fitness;
             }
+            if (currScore > globalScore) {
+                globalScore = currScore;
+            }
             i++;
-        }
-        if (currScore > globalScore) {
-            globalScore = currScore;
         }
 
         gens++;
         genPrinter++;
 
-        if (genPrinter == 100) {
+        if (gens == 1 || genPrinter == 10) {
             std::cout << "Gen: " << gens
                       << ". Best score: " << globalScore
-                      << ". Curr coef: " << fitness
+                      << ". Best coef: " << bestFitness
                       << std::endl;
 
             genPrinter = 0;

@@ -31,7 +31,8 @@ class Board {
     std::vector<std::vector<int>> board; // = std::vector<std::vector<int>>(WIDTH, std::vector<int>(HEIGHT, 0));
 
   public:
-    Board(Snake *snakeParm);           // constructor
+    Board(Snake *snakeParm); // constructor
+    ~Board();
     void clear();                      // limpia el tablero
     void set(int x, int y, int value); // setea una celda
     int get(int x, int y) const;       // obtiene una celda

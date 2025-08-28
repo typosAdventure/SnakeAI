@@ -4,6 +4,10 @@
 #include <iostream>
 #include <vector>
 
+Board::~Board() {
+    delete food;
+}
+
 // Constructor: inicializa todo a 0
 Board::Board(Snake *snakeParm) : gen(std::random_device{}()),
                                  distX(0, WIDTH - 1),
@@ -18,10 +22,6 @@ Board::Board(Snake *snakeParm) : gen(std::random_device{}()),
 
 // Limpia el tablero
 void Board::clear() {
-    // std::cout << "board[1][1]" << std::endl;
-    // std::cout << board[1][1] << std::endl;
-    // std::cout << "board[1][1]" << std::endl;
-
     for (size_t i = 0; i < board.size(); i++) {
         for (size_t j = 0; j < board[i].size(); j++) {
             board[i][j] = 0;
@@ -117,5 +117,5 @@ void Board::generateRandomFood() {
 
     food->x = fx;
     food->y = fy;
-    std::cout << "Food (x: " << food->x << ", y:" << food->y << ")" << std::endl;
+    // std::cout << "Food (x: " << food->x << ", y:" << food->y << ")" << std::endl;
 }

@@ -3,6 +3,11 @@
 #include <chrono>
 #include <iostream>
 
+Game::~Game() {
+    delete snake;
+    delete board;
+}
+
 bool Game::snakeAlive() {
     return snake->isAlive();
 }
@@ -38,6 +43,7 @@ Game::Game(bool doesRender) {
     board = new Board(snake);
     render = doesRender;
 
+    score = 0;
     legalMoves = 0;
     steps = 0;
     board->clear();
@@ -101,8 +107,8 @@ GameInfo Game::getGameInfo() {
             entireBoard.emplace_back(board->getBoard()[i][j]);
         }
     }
-
-    return {entireBoard, snake->isAlive(), snake->movingTo, legalMoves, steps, score};
+    // std::cout << score << " acá" << std::endl;
+    return {entireBoard, snake->isAlive(), snake->movingTo, legalMoves, steps, (size_t)snake->score};
 }
 
 void Game::move(Dir dir) {

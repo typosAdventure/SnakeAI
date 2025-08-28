@@ -11,6 +11,8 @@ struct Part {
     int x;
     int y;
     Part *previousPart;
+
+    ~Part();
 };
 
 class Snake {

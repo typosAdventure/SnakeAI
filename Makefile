@@ -1,9 +1,12 @@
 CXX := g++
-CXXFLAGS := -Wall -Wextra -std=c++20 -O2 -Iinclude -fopenmp
+INCLUDES := -Iinclude
+CXXFLAGS := -std=c++20 -O3 -march=native -ffast-math -fno-math-errno -ffp-contract=fast \
+                    -fno-trapping-math -fopenmp -fopenmp-simd -DNDEBUG -fomit-frame-pointer \
+                    -flto $(INCLUDES)
 # Usa pkg-config si está
 # SFML_LIBS := $(shell pkg-config --libs sfml-graphics) # incluye window y system
 # Si no tenés pkg-config, usá esto:
-SFML_LIBS := -lsfml-graphics -lsfml-window -lsfml-system -fopenmp
+SFML_LIBS := -lsfml-graphics -lsfml-window -lsfml-system -fopenmp -flto
 
 SRC := $(shell find src -name '*.cpp')
 OBJ := $(patsubst src/%.cpp, build/%.o, $(SRC))

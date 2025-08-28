@@ -3,6 +3,14 @@
 #include <iostream>
 #include <tuple>
 
+Snake::~Snake() {
+    delete head;
+}
+
+Part::~Part() {
+    delete previousPart;
+}
+
 Snake::Snake() {
     alive = true;
     movingTo = Dir::RIGHT;
@@ -61,6 +69,7 @@ void Snake::removeTail() {
 bool Snake::collidesWith(int newX, int newY) {
     Part *current = getHead();
 
+    // TODO: Arreglar lógica para no chocar con la cola.
     while (current != nullptr && !(current->x == newX && current->y == newY)) {
         current = current->previousPart;
     }
